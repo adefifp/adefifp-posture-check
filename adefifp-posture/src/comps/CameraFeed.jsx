@@ -5,14 +5,15 @@ import { Camera } from "@mediapipe/camera_utils";
 const CameraFeed = () => {
     const videoRef = useRef(null);
     const canvasRef = useRef(null);
-    const [posture, setPosture] = useState("Good");
-    const [goodPostureHeight, setGoodPostureHeight] = useState(null);
+    const [shoulders, setShoulders] = useState("Good");
+    const [head, setHead] = useState("Good")
+    const [posture, setPosture] = useState ("Good")
+    const goodPostureHeight = useRef(null);
     const [landmarks, setLandmarks] = useState(null); // State to store landmarks
 
     useEffect(() => {
         const startCamera = async () => {
             try {
-                // Request camera access
                 const stream = await navigator.mediaDevices.getUserMedia({
                     video: true,
                     audio: false,
@@ -25,7 +26,6 @@ const CameraFeed = () => {
             }
         };
 
-        // Initialize MediaPipe Pose
         const pose = new Pose({
             locateFile: (file) => `https://cdn.jsdelivr.net/npm/@mediapipe/pose@latest/${file}`,
         });
@@ -39,7 +39,7 @@ const CameraFeed = () => {
 
         pose.onResults((results) => {
             if (results.poseLandmarks) {
-                setLandmarks(results.poseLandmarks); // Update landmarks state
+                setLandmarks(results.poseLandmarks);
                 drawResults(results.poseLandmarks);
                 analyzePosture(results.poseLandmarks);
             }
@@ -55,7 +55,7 @@ const CameraFeed = () => {
 
         camera.start();
         startCamera();
-    }, []); // Empty dependency array ensures this runs only once
+    }, []);
 
     const drawResults = (landmarks) => {
         const ctx = canvasRef.current.getContext("2d");
@@ -78,41 +78,50 @@ const CameraFeed = () => {
         }
     };
 
-    const analyzePosture = (landmarks) => {
-        const leftShoulder = landmarks[11];
-        const rightShoulder = landmarks[12];
-        const angle = Math.abs(leftShoulder.y - rightShoulder.y);
-        const currentShoulderHeight = (leftShoulder.y + rightShoulder.y) / 2;
+const analyzePosture = (landmarks) => {
+    const leftShoulder = landmarks[11];
+    const rightShoulder = landmarks[12];
+    const leftEar = landmarks [7];
+    const rightEar = landmarks [8];
+    const angle = Math.abs(leftShoulder.y - rightShoulder.y);
+    const earHeightDifference = Math.abs(leftEar.y - rightEar.y);
 
-        if (goodPostureHeight !== null) {
-            const heightDifference = Math.abs(goodPostureHeight - currentShoulderHeight);
-
-            // Define a threshold for slouching detection (you can tweak this value)
-            const slouchThreshold = 0.01; // Threshold for slouching detection
-
+        const slouchThreshold = 0.025;
+        const tiltThreshold = 0.05;
+        const shoulderAngleThreshold = 0.05;
+        
+        let newPosture = "Good"
+        if (goodPostureHeight.current == null) {
+            newPosture = "Please Set Ideal Posture"
+        }
+        if (goodPostureHeight.current !== null) {
+            const currentShoulderHeight = (leftShoulder.y + rightShoulder.y) / 2;
+            const heightDifference = Math.abs(goodPostureHeight.current - currentShoulderHeight);
             if (heightDifference > slouchThreshold) {
-                setPosture("Slouching"); // Shoulders are too low, slouching detected
-            } else {
-                setPosture("Good"); // Shoulders are aligned with the good posture
+                newPosture = "Slouching";
             }
         }
-
-        if (angle > 0.05) {
-            setPosture("Bad");
-        } else {
-            setPosture("Good");
+        let newHead = "Good"
+        if (earHeightDifference > tiltThreshold){
+            newHead = "Head Tilt"
         }
-    };
+        let newShoulders = "Good"
+        if (angle > shoulderAngleThreshold) {
+            newShoulders = "Uneven Shoulders";
+        }
+        setHead(newHead)
+        setShoulders(newShoulders)
+        setPosture(newPosture)
+};
 
     const setGoodPosture = () => {
         if (landmarks) {
             const leftShoulder = landmarks[11];
             const rightShoulder = landmarks[12];
 
-            // Save the average shoulder height as the good posture reference
             const height = (leftShoulder.y + rightShoulder.y) / 2;
-            setGoodPostureHeight(height);
-            alert("Good posture height saved!"); // Notify the user that the height is saved
+            goodPostureHeight.current = height;
+            alert("Good posture height saved!");
         } else {
             alert("No landmarks detected yet.");
         }
@@ -120,10 +129,10 @@ const CameraFeed = () => {
 
     return (
         <div className="flex flex-col items-center">
-            <h1 className="text-xl font-bold">WebRTC Camera + Posture Detection</h1>
+            <h1 className="text-xl font-bold">Posture Detection</h1>
             <video ref={videoRef} autoPlay playsInline className="mt-4 border border-gray-400 rounded-lg w-80 h-60" />
             <canvas ref={canvasRef} className="mt-4 w-80 h-60 absolute top-0 left-0" />
-            <div className="mt-4 text-xl font-semibold">{posture} Posture</div>
+            <div className="mt-4 text-xl font-semibold">Head: {head}, Shoulders: {shoulders}, Posture: {posture}</div>
             <button
                 className="mt-4 px-4 py-2 bg-blue-500 text-white rounded"
                 onClick={setGoodPosture}>Set Good Posture</button>
