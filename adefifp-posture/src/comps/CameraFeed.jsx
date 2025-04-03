@@ -9,7 +9,9 @@ const CameraFeed = () => {
     const [head, setHead] = useState("Good")
     const [posture, setPosture] = useState ("Good")
     const goodPostureHeight = useRef(null);
-    const [landmarks, setLandmarks] = useState(null); // State to store landmarks
+    const [landmarks, setLandmarks] = useState(null);
+    const alertTimeout = useRef(null);
+    const alerting = useRef(false);
 
     useEffect(() => {
         const startCamera = async () => {
@@ -89,6 +91,7 @@ const analyzePosture = (landmarks) => {
         const slouchThreshold = 0.025;
         const tiltThreshold = 0.05;
         const shoulderAngleThreshold = 0.05;
+        let shouldPlayAlert = false;
         
         let newPosture = "Good"
         if (goodPostureHeight.current == null) {
@@ -99,19 +102,28 @@ const analyzePosture = (landmarks) => {
             const heightDifference = Math.abs(goodPostureHeight.current - currentShoulderHeight);
             if (heightDifference > slouchThreshold) {
                 newPosture = "Slouching";
+                shouldPlayAlert = true;
             }
         }
         let newHead = "Good"
         if (earHeightDifference > tiltThreshold){
             newHead = "Head Tilt"
+            shouldPlayAlert = true;
         }
         let newShoulders = "Good"
         if (angle > shoulderAngleThreshold) {
             newShoulders = "Uneven Shoulders";
+            shouldPlayAlert = true;
         }
         setHead(newHead)
         setShoulders(newShoulders)
         setPosture(newPosture)
+
+        if (shouldPlayAlert){
+            startAlertTimer()
+        }else{
+            resetTimer()
+        }
 };
 
     const setGoodPosture = () => {
@@ -127,11 +139,33 @@ const analyzePosture = (landmarks) => {
         }
     };
 
+    const playAlert = () =>{
+        const sound = new Audio("/beep.mp3")
+        sound.volume =0.5;
+        sound.play().catch(error => console.error("Error with sound:", error))
+    }
+
+    const startAlertTimer = () => {
+        if(!alerting.current){
+            alerting.current = true;
+            alertTimeout.current = setTimeout(() =>{
+                playAlert();
+                alerting.current = false;
+            }, 5000)
+        }
+    }
+    const resetTimer = () => {
+        if(alertTimeout){
+            clearTimeout(alertTimeout.current);
+            alertTimeout.current = null;
+            alerting.current= false;
+        }
+    }
     return (
         <div className="flex flex-col items-center">
             <h1 className="text-xl font-bold">Posture Detection</h1>
             <video ref={videoRef} autoPlay playsInline className="mt-4 border border-gray-400 rounded-lg w-80 h-60" />
-            <canvas ref={canvasRef} className="mt-4 w-80 h-60 absolute top-0 left-0" />
+            <canvas ref={canvasRef} className="absolute w-[1px] h-[1px] overflow-hidden opacity-0 pointer-events-none" />
             <div className="mt-4 text-xl font-semibold">Head: {head}, Shoulders: {shoulders}, Posture: {posture}</div>
             <button
                 className="mt-4 px-4 py-2 bg-blue-500 text-white rounded"
