@@ -4,7 +4,7 @@ import CameraFeed from './comps/CameraFeed'
 function App() {
 
   return (
-    <div>
+    <div className = "bg-black">
     <CameraFeed />
     </div>
   )

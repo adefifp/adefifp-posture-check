@@ -12,6 +12,9 @@ const CameraFeed = () => {
     const [landmarks, setLandmarks] = useState(null);
     const alertTimeout = useRef(null);
     const alerting = useRef(false);
+    const [volume, setVolume] = useState(.5);
+    const volumeRef = useRef(volume);
+    const audio = useRef(new Audio("/beep.mp3"))
 
     useEffect(() => {
         const startCamera = async () => {
@@ -58,10 +61,14 @@ const CameraFeed = () => {
             width: 640,
             height: 480,
         });
-
         camera.start();
         startCamera();
     }, []);
+
+    useEffect(() => {
+        volumeRef.current = volume;
+        audio.current.volume = volumeRef.current;
+    }, [volume]);
 
     const drawResults = (landmarks) => {
         const ctx = canvasRef.current.getContext("2d");
@@ -144,9 +151,12 @@ const analyzePosture = (landmarks) => {
     };
 
     const playAlert = () =>{
-        const sound = new Audio("/beep.mp3")
-        sound.volume =0.5;
-        sound.play().catch(error => console.error("Error with sound:", error))
+        if(audio.current){
+            audio.current.pause();
+            audio.current.currentTime = 0;
+            audio.current.volume = volumeRef.current;
+            audio.current.play().catch(error => console.error("Error with sound:", error))
+        }
     }
 
     const startAlertTimer = () => {
@@ -156,8 +166,8 @@ const analyzePosture = (landmarks) => {
             if(alerting.current){
                 playAlert();
             } else {
-                    clearInterval(alertTimeout.current);
-                    alertTimeout.current = null;
+                clearInterval(alertTimeout.current);
+                alertTimeout.current = null;
                 }
             }, 5000)
         }
@@ -171,13 +181,26 @@ const analyzePosture = (landmarks) => {
     }
     return (
         <div className="flex flex-col items-center">
-            <h1 className="text-xl font-bold">Posture Detection</h1>
-            <video ref={videoRef} autoPlay playsInline className="mt-4 border border-gray-400 rounded-lg w-80 h-60" />
+            <h1 className="text-xl font-bold text-white mt-3">Posture Detection</h1>
+            <video ref={videoRef} autoPlay playsInline className="mt-4 border border-gray-400 rounded-lg w-1/5 h-1/5" />
             <canvas ref={canvasRef} className="absolute w-[1px] h-[1px] overflow-hidden opacity-0 pointer-events-none" />
-            <div className="mt-4 text-xl font-semibold">Head: {head}, Shoulders: {shoulders}, Posture: {posture}</div>
+            <div className="mt-4 text-xl font-semibold text-white">Head: {head}, Shoulders: {shoulders}, Posture: {posture}</div>
             <button
                 className="mt-4 px-4 py-2 bg-blue-500 text-white rounded"
-                onClick={setGoodPosture}>Set Good Posture</button>
+                onClick={setGoodPosture}>Set Good Posture
+            </button>
+            <div className="mt-4 flex flex-col items-center">
+    <label className="text-sm font-semibold text-white">Volume: {Math.round(volume * 100)}%</label>
+    <input
+        type="range"
+        min="0"
+        max="1"
+        step="0.01"
+        value={volume}
+        onChange={(e) => setVolume(parseFloat(e.target.value))}
+        className="w-40 mt-2"
+    />
+</div>
         </div>
     );
 };
