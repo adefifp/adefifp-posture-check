@@ -180,34 +180,34 @@ const analyzePosture = (landmarks) => {
         }
     }
     return (
-        <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-gray-900 to-gray-800 text-white">
-            <h1 className="text-xl font-bold text-white mt-3">Posture Detection</h1>
-            <video ref={videoRef} autoPlay playsInline className="mt-4 border-4 border-black rounded-lg w-1/5 h-1/5" />
+        <div className="min-h-screen flex flex-col items-center justify-center px-4 bg-gradient-to-br from-gray-900 to-gray-800 text-white">
+            <h1 className="text-2xl sm:text-3xl font-bold text-white mt-3">Posture Detection</h1>
+            <video ref={videoRef} autoPlay playsInline className="mt-4 border-4 border-black rounded-lg w-full max-w-xs sm:max-w-md md:max-w-lg" />
             <canvas ref={canvasRef} className="absolute w-[1px] h-[1px] overflow-hidden opacity-0 pointer-events-none" />
-            <div className="mt-4 text-xl font-semibold text-white">
-                <span className={`px-3 py-1 rounded-full text-lg mx-1
+            <div className="mt-4 flex flex-wrap justify-center gap-2 text-lg font-semibold text-white">
+                <span className={`px-4 py-2 rounded-full text-lg mx-1
                     ${head === 'Good' ? 'bg-green-600' : 'bg-red-600'}`
                 }>
                     Head: {head}
                 </span>
-                <span className={`px-3 py-1 rounded-full text-lg mx-1
+                <span className={`px-4 py-2 rounded-full text-lg mx-1
                     ${shoulders === 'Good' ? 'bg-green-600' : 'bg-red-600'}`
                 }>
                     Shoulders: {shoulders}
                 </span>
-                <span className={`px-3 py-1 rounded-full text-lg mx-1 
+                <span className={`px-4 py-2 rounded-full text-lg mx-1 
                     ${posture === 'Good' ? 'bg-green-600' : 'bg-red-600'}`
                 }>
                     Posture: {posture}
                 </span>
             </div>
             <button
-                className="mt-4 px-5 py-2 bg-blue-700 hover:bg-blue-900 transition-all text-white font-semibold rounded-lg shadow-md"
+                className="mt-4 px-3 py-3 bg-blue-700 hover:bg-blue-900 transition-all text-white text-lg sm:text-xl md:text-xl font-semibold rounded-lg shadow-md w-full max-w-sm"
                 onClick={setGoodPosture}>Set Good Posture
             </button>
             <div className="mt-4 flex flex-col items-center">
             <div className="mt-4 flex flex-col items-center">
-    <label className="text-base font-semibold">Volume: {Math.round(volume * 100)}%</label>
+    <label className="mt-6 flex flex-col items-center w-full max-w-sm text-lg sm:text-xl md:text-2xl font-semibold">Volume: {Math.round(volume * 100)}%</label>
     <input
         type="range"
         min="0"
