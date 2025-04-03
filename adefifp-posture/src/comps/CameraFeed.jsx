@@ -40,10 +40,14 @@ const CameraFeed = () => {
         });
 
         pose.onResults((results) => {
-            if (results.poseLandmarks) {
+            if (results.poseLandmarks && results.poseLandmarks.length > 0) {
                 setLandmarks(results.poseLandmarks);
                 drawResults(results.poseLandmarks);
                 analyzePosture(results.poseLandmarks);
+            } else {
+                setPosture("N/A")
+                setHead("N/A")
+                setShoulders("N/A")
             }
         });
 
