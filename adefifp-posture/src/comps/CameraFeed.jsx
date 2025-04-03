@@ -180,17 +180,34 @@ const analyzePosture = (landmarks) => {
         }
     }
     return (
-        <div className="flex flex-col items-center">
+        <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-gray-900 to-gray-800 text-white">
             <h1 className="text-xl font-bold text-white mt-3">Posture Detection</h1>
-            <video ref={videoRef} autoPlay playsInline className="mt-4 border border-gray-400 rounded-lg w-1/5 h-1/5" />
+            <video ref={videoRef} autoPlay playsInline className="mt-4 border-4 border-black rounded-lg w-1/5 h-1/5" />
             <canvas ref={canvasRef} className="absolute w-[1px] h-[1px] overflow-hidden opacity-0 pointer-events-none" />
-            <div className="mt-4 text-xl font-semibold text-white">Head: {head}, Shoulders: {shoulders}, Posture: {posture}</div>
+            <div className="mt-4 text-xl font-semibold text-white">
+                <span className={`px-3 py-1 rounded-full text-lg mx-1
+                    ${head === 'Good' ? 'bg-green-600' : 'bg-red-600'}`
+                }>
+                    Head: {head}
+                </span>
+                <span className={`px-3 py-1 rounded-full text-lg mx-1
+                    ${shoulders === 'Good' ? 'bg-green-600' : 'bg-red-600'}`
+                }>
+                    Shoulders: {shoulders}
+                </span>
+                <span className={`px-3 py-1 rounded-full text-lg mx-1 
+                    ${posture === 'Good' ? 'bg-green-600' : 'bg-red-600'}`
+                }>
+                    Posture: {posture}
+                </span>
+            </div>
             <button
-                className="mt-4 px-4 py-2 bg-blue-500 text-white rounded"
+                className="mt-4 px-5 py-2 bg-blue-700 hover:bg-blue-900 transition-all text-white font-semibold rounded-lg shadow-md"
                 onClick={setGoodPosture}>Set Good Posture
             </button>
             <div className="mt-4 flex flex-col items-center">
-    <label className="text-sm font-semibold text-white">Volume: {Math.round(volume * 100)}%</label>
+            <div className="mt-4 flex flex-col items-center">
+    <label className="text-base font-semibold">Volume: {Math.round(volume * 100)}%</label>
     <input
         type="range"
         min="0"
@@ -198,8 +215,9 @@ const analyzePosture = (landmarks) => {
         step="0.01"
         value={volume}
         onChange={(e) => setVolume(parseFloat(e.target.value))}
-        className="w-40 mt-2"
+        className="w-60 mt-2 accent-blue-500"
     />
+</div>
 </div>
         </div>
     );
