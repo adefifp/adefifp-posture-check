@@ -152,14 +152,18 @@ const analyzePosture = (landmarks) => {
     const startAlertTimer = () => {
         if(!alerting.current){
             alerting.current = true;
-            alertTimeout.current = setTimeout(() =>{
+            alertTimeout.current = setInterval(() =>{
+            if(alerting.current){
                 playAlert();
-                alerting.current = false;
+            } else {
+                    clearInterval(alertTimeout.current);
+                    alertTimeout.current = null;
+                }
             }, 5000)
         }
     }
     const resetTimer = () => {
-        if(alertTimeout){
+        if(alertTimeout.current){
             clearTimeout(alertTimeout.current);
             alertTimeout.current = null;
             alerting.current= false;
