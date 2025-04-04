@@ -182,7 +182,7 @@ const analyzePosture = (landmarks) => {
     return (
         <div className="min-h-screen flex flex-col items-center justify-center px-4 bg-gradient-to-br from-gray-900 to-gray-800 text-white">
             <h1 className="text-2xl sm:text-3xl font-bold text-white mt-3">Posture Detection</h1>
-            <video ref={videoRef} autoPlay playsInline className="mt-4 border-4 border-black rounded-lg w-full max-w-xs sm:max-w-md md:max-w-lg" />
+            <video ref={videoRef} autoPlay playsInline muted className="mt-4 border-4 border-black rounded-lg w-full max-w-xs sm:max-w-md md:max-w-lg" />
             <canvas ref={canvasRef} className="absolute w-[1px] h-[1px] overflow-hidden opacity-0 pointer-events-none" />
             <div className="mt-4 flex flex-wrap justify-center gap-2 text-lg font-semibold text-white">
                 <span className={`px-4 py-2 rounded-full text-lg mx-1
