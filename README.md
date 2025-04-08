@@ -25,6 +25,7 @@ Currently, it is set to sound a beep alert whenever bad posture has been detecte
 ## 🙋‍♂️ About
 
 Created by Eddie Lu, a motivated student developer at Boston University with a strong interest in building practical, user-focused tools that improve everyday life.  
+
 I’m passionate about using technology to solve real problems and constantly learning new skills to grow as a software engineer.
 
 📫[LinkedIn](https://www.linkedin.com/in/eddie-lu-341439289/)
