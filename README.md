@@ -15,7 +15,7 @@ It will watch for uneven shoulders, head tilt, and slouching. To enable the slou
 
 Currently, it is set to sound a beep alert whenever bad posture has been detected for 5 seconds straight. 
 
-## 🛠️ Developer Info (Optional)
+## 🛠️ Developer Info
 
 **Built With**:
 - React
