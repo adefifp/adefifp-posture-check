@@ -19,8 +19,9 @@ Currently, it is set to sound a beep alert whenever bad posture has been detecte
 
 **Built With**:
 - React
-- MediaPipe (for pose detection)
+- MediaPipe
 - Tailwind CSS
+- Javascript
 
 ## 🙋‍♂️ About
 
